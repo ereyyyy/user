@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import user.example.user.model.entitiy.UserEntity;
 import user.example.user.model.enums.ResponseStatus;
+import user.example.user.model.enums.UserType;
 import user.example.user.model.mapper.UserMapper;
 import user.example.user.model.repository.UserRepository;
 import user.example.user.model.request.NewUserRequest;
@@ -28,32 +29,30 @@ public class UserServiceImpl implements UserService {
     public NewUserResponse createUser(NewUserRequest request) {
 
         NewUserResponse response = new NewUserResponse();
-        try {
+//        try {
             UserEntity entity = UserMapper.INSTANCE.NewUserRequestToUserEntity(request);
+            entity.setPassword(request.getPassword());
+            entity.setUserType(request.getUserType());
 
-            if (!request.getAddresses().isEmpty()) {
-
-                String addressesForEntity = request.getAddresses().getFirst();
-
-                for (int i = 1; i < request.getAddresses().size(); i++) {
-                    addressesForEntity += "#" + request.getAddresses().get(i);
-                }
-
+            String addressesForEntity = request.getAddresses();
+            if (addressesForEntity != null && !addressesForEntity.isEmpty()) {
+                entity.setAddresses(addressesForEntity);
                 repository.save(entity);
                 response.setResponseStatus(ResponseStatus.SUCCESS);
-                entity.setAddresses(addressesForEntity);
                 UserRequest userRequest = new UserRequest();
                 userRequest.setAddresses(addressesForEntity);
                 userRequest.setName(request.getName());
                 userRequest.setEmail(request.getEmail());
+                userRequest.setPassword(request.getPassword());
+                userRequest.setUserType(request.getUserType());
                 cardService.createUser(userRequest);
             }
 
             return response;
-    } catch (Exception e) {
-            response.setResponseStatus(ResponseStatus.FAILURE);
-            return response;
-        }
+//    } catch (Exception e) {
+//            response.setResponseStatus(ResponseStatus.FAILURE);
+//            return response;
+//        }
     }
 
     @Override

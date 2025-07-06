@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import user.example.user.model.enums.UserType;
 
 @Entity
 @Table(name = "users")
@@ -21,6 +22,13 @@ public class UserEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, name = "addresses_text")
+    @Column(nullable = true, name = "addresses_text")
     private String addresses;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "user_type")
+    private UserType userType;
 }
